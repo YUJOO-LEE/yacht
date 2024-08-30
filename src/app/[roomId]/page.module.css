@@ -1,0 +1,20 @@
+.wrapper {
+  width: 100vw;
+  height: 100vh;
+  padding: 20px;
+  display: grid;
+  grid-template-rows: auto 1fr;
+  gap: 24px;
+}
+
+.notice {
+  padding: 16px;
+  background-color: lightsalmon;
+  border-radius: 8px;
+}
+
+.boardWrapper {
+  display: flex;
+  border: 1px solid lightgray;
+  border-radius: 8px;
+}

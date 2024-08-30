@@ -1,0 +1,52 @@
+.scoreWrapper {
+  display: grid;
+  grid-template-rows: 2fr 8fr 1fr 5fr 2fr;
+  gap: 8px;
+}
+
+.upperSection {
+  display: grid;
+  grid-template-rows: repeat(6, 1fr) 2fr;
+  border-top: 1px solid lightgray;
+  border-bottom: 1px solid lightgray;
+}
+
+.lowerSection {
+  display: grid;
+  grid-template-rows: repeat(5, 1fr);
+  border-top: 1px solid lightgray;
+  border-bottom: 1px solid lightgray;
+}
+
+.subScore {
+  display: grid;
+  background-color: lightgray;
+  font-weight: 600;
+  font-size: 0.9rem;
+}
+
+.choice {
+  display: grid;
+  border-top: 1px solid lightgray;
+  border-bottom: 1px solid lightgray;
+}
+
+.total {
+  display: grid;
+  background-color: lightgray;
+  border-top: 1px solid lightgray;
+  font-weight: 700;
+}
+
+.scoreItem {
+  padding: 12px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+  border-right: 1px solid lightgray;
+
+  &:not(:first-of-type) {
+    border-top: 1px solid lightgray;
+  }
+}
