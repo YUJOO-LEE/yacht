@@ -36,7 +36,7 @@ export default function Create({ params }: {
       </h2>
       <hr style={{ width: '100%' }}/>
       {root && gameId && (
-        <QrCode url={`${root}/games/${gameId}/settings`}/>
+        <QrCode url={`${root}/${gameId}/settings`}/>
       )}
       <p>
         신규 게임 생성 화면으로 접속하세요.
