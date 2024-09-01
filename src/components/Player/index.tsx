@@ -20,7 +20,7 @@ export const Player = (props: Props) => {
   const [score, setScore] = useState<Score>({});
 
   const subTotal = (score.aces || 0) + (score.deuces || 0) + (score.threes || 0) + (score.fours || 0) + (score.fives || 0) + (score.sixes || 0);
-  const bonus = isNumber([score.aces, score.deuces, score.threes, score.fours, score.fives, score.sixes]) ? subTotal >= 63 ? 35 : 0 : '';
+  const bonus = subTotal >= 63 ? 35 : isNumber([score.aces, score.deuces, score.threes, score.fours, score.fives, score.sixes]) ? 0 : '';
   const total = subTotal + (bonus || 0) + (score.choice || 0) + (score.fourOfAKind || 0) + (score.fullHouse || 0) + (score.smallStraight || 0) + (score.largeStraight || 0) + (score.yacht || 0);
 
   useEffect(() => {
