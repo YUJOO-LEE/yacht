@@ -2,7 +2,7 @@
 
 import { database } from '@/firebase';
 import { GameData, PlayerData, Score } from '@/types';
-import { onValue, ref, update } from 'firebase/database';
+import { onValue, ref, update, set } from 'firebase/database';
 import { useRouter } from 'next/navigation';
 import React, { useEffect, useState } from 'react';
 import styles from './page.module.css';
@@ -20,20 +20,21 @@ export default function Play({ params }: { params: { gameId: string; playerId: s
   const [score, setScore] = useState<Score>({});
   const [value, setValue] = useState<Score>({});
 
+  const isValid = JSON.stringify(score) === JSON.stringify(value);
+
   const handleChange = (target: keyof Score) => (event: React.ChangeEvent<HTMLInputElement>) => {
     setValue((prev) => ({
       ...prev,
-      [target]: Number(event.target.value),
+      [target]: event.target.value.trim() ? Number(event.target.value) : undefined,
     }));
   };
 
   const handleNext = async () => {
-    const newScoreRef = ref(database, `games/${gameId}`);
+    const newPlayerRef = ref(database, `games/${gameId}/currentPlayer`);
+    await set(newPlayerRef, players.next);
+    const newScoreRef = ref(database, `games/${gameId}/score`);
     await update(newScoreRef, {
-      currentPlayer: players.next,
-      score: {
-        [playerId]: value,
-      },
+      [playerId]: value,
     });
     router.push(`/${gameId}/${players.next}`);
   };
@@ -46,7 +47,9 @@ export default function Play({ params }: { params: { gameId: string; playerId: s
         const data: GameData = snapshot.val();
         const player = data.players.find(({ id }) => id === playerId);
         setPlayer(player);
-        setScore(data.scores?.[playerId] || {});
+        setScore(data.score?.[playerId] || {});
+        setValue(data.score?.[playerId] || {});
+
         const currentPlayer = data.currentPlayer;
         const currentIndex = data.players.findIndex(({ id }) => id === currentPlayer);
         const prevPlayer = data.players.at(currentIndex ? currentIndex - 1 : -1)?.id || '';
@@ -74,9 +77,8 @@ export default function Play({ params }: { params: { gameId: string; playerId: s
           <input
             type="number"
             inputMode="numeric"
-            defaultValue={score.aces}
             disabled={typeof score.aces === 'number'}
-            value={value.aces}
+            value={typeof value.aces === 'number' ? value.aces : ''}
             onChange={handleChange('aces')}
           />
         </li>
@@ -87,9 +89,8 @@ export default function Play({ params }: { params: { gameId: string; playerId: s
           <input
             type="number"
             inputMode="numeric"
-            defaultValue={score.deuces}
             disabled={typeof score.deuces === 'number'}
-            value={value.deuces}
+            value={typeof value.deuces === 'number' ? value.deuces : ''}
             onChange={handleChange('deuces')}
           />
         </li>
@@ -100,9 +101,8 @@ export default function Play({ params }: { params: { gameId: string; playerId: s
           <input
             type="number"
             inputMode="numeric"
-            defaultValue={score.threes}
             disabled={typeof score.threes === 'number'}
-            value={value.threes}
+            value={typeof value.threes === 'number' ? value.threes : ''}
             onChange={handleChange('threes')}
           />
         </li>
@@ -113,9 +113,8 @@ export default function Play({ params }: { params: { gameId: string; playerId: s
           <input
             type="number"
             inputMode="numeric"
-            defaultValue={score.fours}
             disabled={typeof score.fours === 'number'}
-            value={value.fours}
+            value={typeof value.fours === 'number' ? value.fours : ''}
             onChange={handleChange('fours')}
           />
         </li>
@@ -126,9 +125,8 @@ export default function Play({ params }: { params: { gameId: string; playerId: s
           <input
             type="number"
             inputMode="numeric"
-            defaultValue={score.fives}
             disabled={typeof score.fives === 'number'}
-            value={value.fives}
+            value={typeof value.fives === 'number' ? value.fives : ''}
             onChange={handleChange('fives')}
           />
         </li>
@@ -139,9 +137,8 @@ export default function Play({ params }: { params: { gameId: string; playerId: s
           <input
             type="number"
             inputMode="numeric"
-            defaultValue={score.sixes}
             disabled={typeof score.sixes === 'number'}
-            value={value.sixes}
+            value={value.sixes || ''}
             onChange={handleChange('sixes')}
           />
         </li>
@@ -153,9 +150,8 @@ export default function Play({ params }: { params: { gameId: string; playerId: s
           <input
             type="number"
             inputMode="numeric"
-            defaultValue={score.choice}
             disabled={typeof score.choice === 'number'}
-            value={value.choice}
+            value={typeof value.choice === 'number' ? value.choice : ''}
             onChange={handleChange('choice')}
           />
         </li>
@@ -167,9 +163,8 @@ export default function Play({ params }: { params: { gameId: string; playerId: s
           <input
             type="number"
             inputMode="numeric"
-            defaultValue={score.fourOfAKind}
             disabled={typeof score.fourOfAKind === 'number'}
-            value={value.fourOfAKind}
+            value={typeof value.fourOfAKind === 'number' ? value.fourOfAKind : ''}
             onChange={handleChange('fourOfAKind')}
           />
         </li>
@@ -182,7 +177,7 @@ export default function Play({ params }: { params: { gameId: string; playerId: s
             inputMode="numeric"
             defaultValue={score.fullHouse}
             disabled={typeof score.fullHouse === 'number'}
-            value={value.fullHouse}
+            value={typeof value.fullHouse === 'number' ? value.fullHouse : ''}
             onChange={handleChange('fullHouse')}
           />
         </li>
@@ -193,9 +188,8 @@ export default function Play({ params }: { params: { gameId: string; playerId: s
           <input
             type="number"
             inputMode="numeric"
-            defaultValue={score.smallStraight}
             disabled={typeof score.smallStraight === 'number'}
-            value={value.smallStraight}
+            value={typeof value.smallStraight === 'number' ? value.smallStraight : ''}
             onChange={handleChange('smallStraight')}
           />
         </li>
@@ -206,9 +200,8 @@ export default function Play({ params }: { params: { gameId: string; playerId: s
           <input
             type="number"
             inputMode="numeric"
-            defaultValue={score.largeStraight}
             disabled={typeof score.largeStraight === 'number'}
-            value={value.largeStraight}
+            value={typeof value.largeStraight === 'number' ? value.largeStraight : ''}
             onChange={handleChange('largeStraight')}
           />
         </li>
@@ -219,14 +212,13 @@ export default function Play({ params }: { params: { gameId: string; playerId: s
           <input
             type="number"
             inputMode="numeric"
-            defaultValue={score.yacht}
             disabled={typeof score.yacht === 'number'}
-            value={value.yacht}
+            value={typeof value.yacht === 'number' ? value.yacht : ''}
             onChange={handleChange('yacht')}
           />
         </li>
       </ul>
-      <button className="red" onClick={handleNext}>
+      <button className="red" disabled={isValid} onClick={handleNext}>
         Next
       </button>
     </main>

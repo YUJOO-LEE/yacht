@@ -37,6 +37,10 @@ input {
   border: 1px solid lightgray;
   background-color: white;
   border-radius: 6px;
+
+  &[disabled] {
+    background-color: #efefef;
+  }
 }
 
 button {

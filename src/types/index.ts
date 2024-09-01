@@ -21,5 +21,5 @@ export type Score = {
 export type GameData = {
   currentPlayer: string;
   players: PlayerData[];
-  scores: Record<string, Score>;
+  score: Record<string, Score>;
 }
