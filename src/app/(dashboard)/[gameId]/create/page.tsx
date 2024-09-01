@@ -34,7 +34,7 @@ export default function Create({ params }: {
       <h2>
         신규게임
       </h2>
-      <hr width="100%"/>
+      <hr style={{ width: '100%' }}/>
       {root && gameId && (
         <QrCode url={`${root}/games/${gameId}/settings`}/>
       )}

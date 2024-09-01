@@ -17,7 +17,7 @@ export default function Home() {
       <h1>
         Yacht!
       </h1>
-      <hr width="100%"/>
+      <hr style={{ width: '100%' }}/>
       <button onClick={handleNewGame}>
         신규게임
       </button>
