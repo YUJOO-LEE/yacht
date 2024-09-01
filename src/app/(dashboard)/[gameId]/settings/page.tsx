@@ -48,7 +48,7 @@ export default function Setting({ params }: { params: { gameId: string } }) {
       <h2>Realtime Data:</h2>
       <ul>
         {Object.entries(data).map(([key, value]) => (
-          <li key={key}>{value.content} (at {new Date(value.timestamp).toLocaleTimeString()})</li>
+          <li key={key}>{value}</li>
         ))}
       </ul>
     </main>
