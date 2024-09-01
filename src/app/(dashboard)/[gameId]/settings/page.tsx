@@ -12,24 +12,24 @@ export default function Setting({ params }: { params: { gameId: string } }) {
   const { gameId } = params;
   const router = useRouter();
 
-  const [data, setData] = useState<PlayerData[]>([]);
-  const isValid = data.length > 1 && data.every(({ name }) => name.trim());
+  const [players, setPlayers] = useState<PlayerData[]>([]);
+  const isValid = players.length > 1 && players.every(({ name }) => name.trim());
 
   const handleAdd = (index: number) => () => {
     const id = uuidv4().replaceAll('-', '');
-    setData((prev) => {
+    setPlayers((prev) => {
       return prev.toSpliced(index + 1, 0, { id, name: '' });
     });
   };
 
   const handleRemove = (index: number) => () => {
-    setData((prev) => {
+    setPlayers((prev) => {
       return prev.toSpliced(index, 1);
     });
   };
 
   const handleChange = (index: number) => (event: React.ChangeEvent<HTMLInputElement>) => {
-    setData((prev) => {
+    setPlayers((prev) => {
       return prev.with(index, { id: prev[index].id, name: event.target.value });
     })
   };
@@ -37,11 +37,12 @@ export default function Setting({ params }: { params: { gameId: string } }) {
   const handleSaveData = async () => {
     if (!isValid) return;
     const newPlayerRef = ref(database, `games/${gameId}`);
+    const firstPlayer = players[0].id;
     await set(newPlayerRef, {
-      players: data,
-      currentPlayer: data[0].id,
+      players,
+      currentPlayer: firstPlayer,
     });
-    router.push(`/${gameId}/play`);
+    router.push(`/${gameId}/${firstPlayer}`);
   };
 
   useEffect(() => {
@@ -53,10 +54,10 @@ export default function Setting({ params }: { params: { gameId: string } }) {
         const dataArray: PlayerData[] = Object.values(rawData);
 
         if (!dataArray.length) return;
-        setData(dataArray);
+        setPlayers(dataArray);
       } else {
         const id = uuidv4().replaceAll('-', '');
-        setData([{ id, name: '' }]);
+        setPlayers([{ id, name: '' }]);
       }
     });
 
@@ -66,7 +67,7 @@ export default function Setting({ params }: { params: { gameId: string } }) {
   return (
     <main className={styles.main}>
       <ul className={styles.players}>
-        {data.map(({ id, name }, index) => (
+        {players.map(({ id, name }, index) => (
           <li key={id}>
             <i>
               {index + 1}

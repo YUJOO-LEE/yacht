@@ -10,17 +10,16 @@ export type Score = {
   fours?: number;
   fives?: number;
   sixes?: number;
-  bonus?: number;
   choice?: number;
   fourOfAKind?: number;
   fullHouse?: number;
   smallStraight?: number;
   largeStraight?: number;
   yacht?: number;
-  total?: number;
 }
 
 export type GameData = {
   currentPlayer: string;
   players: PlayerData[];
+  scores: Record<string, Score>;
 }
