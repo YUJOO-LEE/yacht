@@ -10,15 +10,33 @@ body {
   overflow-x: hidden;
 }
 
+main {
+  width: 100dvw;
+  height: 100dvh;
+}
+
 a {
   color: inherit;
   text-decoration: none;
 }
 
 hr {
+  width: 100%;
   height: 1px;
   background-color: lightgray;
   border: 0;
+}
+
+ul,li {
+  list-style: none;
+}
+
+input {
+  padding: 8px 12px;
+  font-size: 16px;
+  border: 1px solid lightgray;
+  background-color: white;
+  border-radius: 6px;
 }
 
 button {
@@ -26,10 +44,38 @@ button {
   border: 1px solid lightgray;
   background-color: white;
   border-radius: 6px;
-  cursor: pointer;
   font-size: 16px;
+  color: #000;
+  cursor: pointer;
+
+  &[disabled] {
+    cursor: inherit;
+    opacity: 0.3;
+    background-color: lightgray;
+    &:hover {
+      background-color: lightgray;
+    }
+  }
 
   &:hover {
     background-color: #f6f6f6;
+  }
+
+  &.red {
+    border: 0;
+    background-color: salmon;
+
+    &:hover {
+      background-color: lightsalmon;
+    }
+  }
+
+  &.gray {
+    border: 0;
+    background-color: lightgray;
+
+    &:hover {
+      background-color: #f6f6f6;
+    }
   }
 }

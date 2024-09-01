@@ -1,33 +1,59 @@
 'use client';
 
-import { uuidv4 } from '@firebase/util';
-import { useState, useEffect } from 'react';
 import { database } from '@/firebase';
-import { ref, set, push, onValue } from 'firebase/database';
+import { PlayerData } from '@/types';
+import { uuidv4 } from '@firebase/util';
+import { onValue, ref, set } from 'firebase/database';
+import { useRouter } from 'next/navigation';
+import React, { useEffect, useState } from 'react';
+import styles from './page.module.css';
 
 export default function Setting({ params }: { params: { gameId: string } }) {
   const { gameId } = params;
+  const router = useRouter();
 
-  const [inputValue, setInputValue] = useState('');
-  const [data, setData] = useState({});
+  const [data, setData] = useState<PlayerData[]>([]);
+  const isValid = data.length > 1 && data.every(({ name }) => name.trim());
+
+  const handleAdd = (index: number) => () => {
+    const id = uuidv4().replaceAll('-', '');
+    setData((prev) => {
+      return prev.toSpliced(index + 1, 0, { id, name: '' });
+    });
+  };
+
+  const handleRemove = (index: number) => () => {
+    setData((prev) => {
+      return prev.toSpliced(index, 1);
+    });
+  };
+
+  const handleChange = (index: number) => (event: React.ChangeEvent<HTMLInputElement>) => {
+    setData((prev) => {
+      return prev.with(index, { id: prev[index].id, name: event.target.value });
+    })
+  };
 
   const handleSaveData = async () => {
-    if (inputValue.trim()) {
-      const newDataRef = push(ref(database, `games/${gameId}/players`)); // 새 데이터 항목 생성
-      const id = uuidv4().replaceAll('-', '');
-      await set(newDataRef, { id, name: inputValue });
-      setInputValue('');
-    }
+    if (!isValid) return;
+    const newDataRef = ref(database, `games/${gameId}/players`);
+    await set(newDataRef, data);
+    router.push(`/${gameId}/play`);
   };
 
   useEffect(() => {
-    const dataRef = ref(database, `games/${gameId}`);
+    const dataRef = ref(database, `games/${gameId}/players`);
 
     const unsubscribe = onValue(dataRef, (snapshot) => {
       if (snapshot.exists()) {
-        setData(snapshot.val());
+        const rawData = snapshot.val();
+        const dataArray: PlayerData[] = Object.values(rawData);
+
+        if (!dataArray.length) return;
+        setData(dataArray);
       } else {
-        setData({});
+        const id = uuidv4().replaceAll('-', '');
+        setData([{ id, name: '' }]);
       }
     });
 
@@ -35,17 +61,37 @@ export default function Setting({ params }: { params: { gameId: string } }) {
   }, []);
 
   return (
-    <main>
-      플레이어 1
-      <input
-        type="text"
-        value={inputValue}
-        onChange={(e) => setInputValue(e.target.value)}
-        placeholder="Enter some data"
-      />
-      <button onClick={handleSaveData}>Save Data</button>
-
-      <h2>Realtime Data:</h2>
+    <main className={styles.main}>
+      <ul className={styles.players}>
+        {data.map(({ id, name }, index) => (
+          <li key={id}>
+            <i>
+              {index + 1}
+            </i>
+            <p>
+              Player
+            </p>
+            <input
+              type="text"
+              value={name}
+              onChange={handleChange(index)}
+              placeholder="Enter player name"
+            />
+            <div className={styles.actions}>
+              <button className="red" onClick={handleAdd(index)}>
+                +
+              </button>
+              {!!index && (
+                <button className="gray" onClick={handleRemove(index)}>
+                  -
+                </button>
+              )}
+            </div>
+          </li>
+        ))}
+      </ul>
+      <hr/>
+      <button onClick={handleSaveData} disabled={!isValid}>Start play</button>
     </main>
   );
 };

@@ -1,6 +1,4 @@
 .main {
-  width: 100dvw;
-  height: 100dvh;
   padding: 24px;
   display: grid;
   grid-template-rows: 1fr auto auto auto 2fr;

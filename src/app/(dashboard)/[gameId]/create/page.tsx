@@ -32,9 +32,9 @@ export default function Create({ params }: {
   return (
     <main className={styles.main}>
       <h2>
-        신규게임
+        New game
       </h2>
-      <hr style={{ width: '100%' }}/>
+      <hr />
       {root && gameId && (
         <QrCode url={`${root}/${gameId}/settings`}/>
       )}
