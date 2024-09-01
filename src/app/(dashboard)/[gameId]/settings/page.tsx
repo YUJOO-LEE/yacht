@@ -3,7 +3,7 @@
 import { database } from '@/firebase';
 import { PlayerData } from '@/types';
 import { uuidv4 } from '@firebase/util';
-import { onValue, ref, set } from 'firebase/database';
+import { onValue, ref, set, update } from 'firebase/database';
 import { useRouter } from 'next/navigation';
 import React, { useEffect, useState } from 'react';
 import styles from './page.module.css';
@@ -36,8 +36,10 @@ export default function Setting({ params }: { params: { gameId: string } }) {
 
   const handleSaveData = async () => {
     if (!isValid) return;
-    const newDataRef = ref(database, `games/${gameId}/players`);
-    await set(newDataRef, data);
+    const newPlayerRef = ref(database, `games/${gameId}/players`);
+    await set(newPlayerRef, data);
+    const newGameRef = ref(database, `games/${gameId}/currentPlayer`);
+    await set(newGameRef, data[0].id);
     router.push(`/${gameId}/play`);
   };
 
