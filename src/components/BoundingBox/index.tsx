@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react';
 import styles from './box.module.css';
 
 type Props = {
-  currentPlayer: number;
+  currentPlayer: string;
 }
 
 export const BoundingBox = (props: Props) => {
@@ -19,7 +19,7 @@ export const BoundingBox = (props: Props) => {
   } : undefined;
 
   useEffect(() => {
-    const element = document.getElementById(`${currentPlayer}`);
+    const element = document.getElementById(currentPlayer);
     const observer = new ResizeObserver((entries) => {
       if (entries && entries[0]) {
         const el = entries[0].target as HTMLElement;

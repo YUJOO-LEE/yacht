@@ -3,34 +3,46 @@
 import { Aside } from '@/components/Aside';
 import { BoundingBox } from '@/components/BoundingBox';
 import { Player } from '@/components/Player';
-import { useState } from 'react';
+import { database } from '@/firebase';
+import { GameData, PlayerData } from '@/types';
+import { onValue, ref } from 'firebase/database';
+import { useEffect, useState } from 'react';
 import styles from './page.module.css';
 
-const players = [0, 1, 2, 3];
+export default function Room({ params }: { params: { gameId: string } }) {
+  const { gameId } = params;
 
-export default function Room() {
-  const [currentPlayer, setCurrentPlayer] = useState<number>(0);
+  const [currentPlayer, setCurrentPlayer] = useState<string>('');
+  const [playerList, setPlayerList] = useState<PlayerData[]>([]);
 
-  const handleNext = () => {
-    setCurrentPlayer((prev) => {
-      const next = prev + 1;
-      if (next >= players.length) return 0;
-      return next;
+  const currentPlayerName = playerList.find(({ id }) => id === currentPlayer)?.name;
+
+  useEffect(() => {
+    const dataRef = ref(database, `games/${gameId}`);
+
+    const unsubscribe = onValue(dataRef, (snapshot) => {
+      if (snapshot.exists()) {
+        const data: GameData = snapshot.val();
+        setCurrentPlayer(data.currentPlayer);
+        setPlayerList(data.players);
+      }
     });
-  };
+
+    return () => unsubscribe();
+  }, []);
 
   return (
     <main className={styles.wrapper}>
-      <div className={styles.notice} onClick={handleNext}>
-        다음
+      <div className={styles.notice}>
+        플레이어 <strong>{currentPlayerName}</strong> 차례입니다.
       </div>
 
       <div className={styles.boardWrapper}>
-        <BoundingBox currentPlayer={currentPlayer} />
+        <BoundingBox currentPlayer={currentPlayer}/>
         <Aside/>
 
-        {players.map((id) => (
-          <Player key={`${id}`} id={id} />
+        {playerList.map(({ id, name }) => (
+          <Player key={id} gameId={gameId} id={id} name={name}/>
         ))}
       </div>
     </main>
