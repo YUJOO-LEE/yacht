@@ -46,11 +46,11 @@ export default function Play({ params }: { params: { gameId: string; playerId: s
         const data: GameData = snapshot.val();
         const player = data.players.find(({ id }) => id === playerId);
         setPlayer(player);
-        setScore(data.scores[playerId] || {});
+        setScore(data.scores?.[playerId] || {});
         const currentPlayer = data.currentPlayer;
         const currentIndex = data.players.findIndex(({ id }) => id === currentPlayer);
         const prevPlayer = data.players.at(currentIndex ? currentIndex - 1 : -1)?.id || '';
-        const nextPlayer = data.players.at(currentIndex === (data.players.length - 1) ? currentIndex + 1 : 0)?.id || '';
+        const nextPlayer = data.players.at(currentIndex < (data.players.length - 1) ? currentIndex + 1 : 0)?.id || '';
 
         setPlayers({
           prev: prevPlayer,
