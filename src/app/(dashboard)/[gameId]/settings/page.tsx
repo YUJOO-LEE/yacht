@@ -1,18 +1,21 @@
 'use client';
 
+import { uuidv4 } from '@firebase/util';
 import { useState, useEffect } from 'react';
 import { database } from '@/firebase';
 import { ref, set, push, onValue } from 'firebase/database';
-import { v4 } from 'uuid';
 
-export default function Setting({ gameId }: { gameId: string }) {
+export default function Setting({ params }: { params: { gameId: string } }) {
+  const { gameId } = params;
+
   const [inputValue, setInputValue] = useState('');
   const [data, setData] = useState({});
 
   const handleSaveData = async () => {
     if (inputValue.trim()) {
       const newDataRef = push(ref(database, `games/${gameId}/players`)); // 새 데이터 항목 생성
-      await set(newDataRef, { id: v4(), name: inputValue });
+      const id = uuidv4().replaceAll('-', '');
+      await set(newDataRef, { id, name: inputValue });
       setInputValue('');
     }
   };
