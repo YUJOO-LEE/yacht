@@ -4,6 +4,12 @@
   gap: 8px;
 }
 
+.title {
+  padding: 12px;
+  font-size: 2dvh;
+  color: transparent;
+}
+
 .upperSection {
   display: grid;
   grid-template-rows: repeat(6, 1fr) 2fr;
@@ -39,12 +45,14 @@
 }
 
 .scoreItem {
-  padding: 12px;
+  padding: 0 12px;
   display: flex;
   justify-content: center;
   align-items: center;
   text-align: center;
   border-right: 1px solid lightgray;
+  font-size: 1.5dvh;
+  line-height: 2dvh;
 
   &:not(:first-of-type) {
     border-top: 1px solid lightgray;

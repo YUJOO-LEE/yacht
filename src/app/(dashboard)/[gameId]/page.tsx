@@ -42,7 +42,7 @@ export default function Room({ params }: { params: { gameId: string } }) {
         <Aside/>
 
         {playerList.map(({ id, name }) => (
-          <Player key={id} gameId={gameId} id={id} name={name}/>
+          <Player key={id} gameId={gameId} id={id} name={name} isActive={id === currentPlayer}/>
         ))}
       </div>
     </main>

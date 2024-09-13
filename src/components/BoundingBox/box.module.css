@@ -6,7 +6,7 @@
   width: 0;
   height: 0;
   border-radius: 8px;
-  border: 4px solid lightsalmon;
+  border: 4px solid orangered;
   transform: translate(-3px, -3px);
   transition: top 0.3s, left 0.3s, width 0.3s, opacity 0.3s ease 0.3s;
   opacity: 0;

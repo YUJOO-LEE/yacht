@@ -43,24 +43,27 @@ export default function Play({ params }: { params: { gameId: string; playerId: s
     const dataRef = ref(database, `games/${gameId}`);
 
     const unsubscribe = onValue(dataRef, (snapshot) => {
-      if (snapshot.exists()) {
-        const data: GameData = snapshot.val();
-        const player = data.players.find(({ id }) => id === playerId);
-        setPlayer(player);
-        setScore(data.score?.[playerId] || {});
-        setValue(data.score?.[playerId] || {});
-
-        const currentPlayer = data.currentPlayer;
-        const currentIndex = data.players.findIndex(({ id }) => id === currentPlayer);
-        const prevPlayer = data.players.at(currentIndex ? currentIndex - 1 : -1)?.id || '';
-        const nextPlayer = data.players.at(currentIndex < (data.players.length - 1) ? currentIndex + 1 : 0)?.id || '';
-
-        setPlayers({
-          prev: prevPlayer,
-          current: currentPlayer,
-          next: nextPlayer,
-        });
+      if (!snapshot.exists()) {
+        router.push(`/`);
+        return;
       }
+
+      const data: GameData = snapshot.val();
+      const player = data.players.find(({ id }) => id === playerId);
+      setPlayer(player);
+      setScore(data.score?.[playerId] || {});
+      setValue(data.score?.[playerId] || {});
+
+      const currentPlayer = data.currentPlayer;
+      const currentIndex = data.players.findIndex(({ id }) => id === currentPlayer);
+      const prevPlayer = data.players.at(currentIndex ? currentIndex - 1 : -1)?.id || '';
+      const nextPlayer = data.players.at(currentIndex < (data.players.length - 1) ? currentIndex + 1 : 0)?.id || '';
+
+      setPlayers({
+        prev: prevPlayer,
+        current: currentPlayer,
+        next: nextPlayer,
+      });
     });
 
     return () => unsubscribe();

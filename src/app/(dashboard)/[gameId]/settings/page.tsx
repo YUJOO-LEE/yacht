@@ -82,11 +82,11 @@ export default function Setting({ params }: { params: { gameId: string } }) {
               placeholder="Enter player name"
             />
             <div className={styles.actions}>
-              <button className="red" onClick={handleAdd(index)}>
+              <button className="red small" onClick={handleAdd(index)}>
                 +
               </button>
               {!!index && (
-                <button className="gray" onClick={handleRemove(index)}>
+                <button className="gray small" onClick={handleRemove(index)}>
                   -
                 </button>
               )}
@@ -95,7 +95,7 @@ export default function Setting({ params }: { params: { gameId: string } }) {
         ))}
       </ul>
       <hr/>
-      <button onClick={handleSaveData} disabled={!isValid}>Start play</button>
+      <button className="red" onClick={handleSaveData} disabled={!isValid}>Start play</button>
     </main>
   );
 };

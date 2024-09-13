@@ -3,7 +3,7 @@ import styles from './aside.module.css';
 export const Aside = () => {
   return (
     <div className={styles.scoreWrapper}>
-      <div/>
+      <div className={styles.title}>-</div>
       <div className={styles.upperSection}>
         <div className={styles.scoreItem}>
           에이스

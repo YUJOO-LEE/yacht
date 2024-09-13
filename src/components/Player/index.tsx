@@ -12,10 +12,11 @@ type Props = {
   key: string;
   id: string;
   name: string;
+  isActive: boolean;
 }
 
 export const Player = (props: Props) => {
-  const { gameId, id, name } = props;
+  const { gameId, id, name, isActive } = props;
 
   const [score, setScore] = useState<Score>({});
 
@@ -38,7 +39,7 @@ export const Player = (props: Props) => {
 
   return (
     <div className={styles.scoreWrapper} id={id}>
-      <div className={styles.playerName}>
+      <div className={`${styles.playerName} ${isActive ? styles.active : ''}`}>
         {name}
       </div>
       <div className={styles.upperSection}>
