@@ -6,7 +6,7 @@
 
 .title {
   padding: 12px;
-  font-size: 2dvh;
+  font-size: 2vh;
   color: transparent;
 }
 
@@ -52,8 +52,8 @@
   align-items: center;
   text-align: center;
   border-right: 1px solid lightgray;
-  font-size: 1.5dvh;
-  line-height: 2dvh;
+  font-size: 1.5vh;
+  line-height: 2vh;
 
   &:not(:first-of-type) {
     border-top: 1px solid lightgray;

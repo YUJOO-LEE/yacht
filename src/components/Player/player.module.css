@@ -20,8 +20,8 @@
   transition: 0.3s;
 
   & svg {
-    width: 4dvh;
-    height: 4dvh;
+    width: 4vh;
+    height: 4vh;
   }
 }
 
@@ -55,7 +55,7 @@
     justify-content: center;
     align-items: center;
     text-align: center;
-    font-size: 2dvh;
+    font-size: 2vh;
 
     &:empty:before {
       content: '-';
@@ -63,7 +63,7 @@
     }
 
     &:first-of-type {
-      font-size: 1.5dvh;
+      font-size: 1.5vh;
     }
   }
 }
@@ -86,7 +86,7 @@
   justify-content: center;
   align-items: center;
   text-align: center;
-  font-size: 2dvh;
+  font-size: 2vh;
   line-height: 1;
 
   &:empty:before {
@@ -104,7 +104,7 @@
   justify-content: center;
   align-items: center;
   text-align: center;
-  font-size: 2dvh;
+  font-size: 2vh;
   line-height: 1;
   font-weight: 700;
   transition: all 0.2s;
@@ -113,5 +113,5 @@
 .active {
   background-color: orangered;
   color: white;
-  font-size: 3dvh;
+  font-size: 3vh;
 }
