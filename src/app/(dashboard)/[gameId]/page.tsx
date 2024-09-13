@@ -8,6 +8,7 @@ import { GameData, PlayerScore } from '@/types';
 import { onValue, ref } from 'firebase/database';
 import { useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
+import Fireworks from 'react-canvas-confetti/dist/presets/fireworks';
 import styles from './page.module.css';
 
 export default function Room({ params }: { params: { gameId: string } }) {
@@ -70,6 +71,10 @@ export default function Room({ params }: { params: { gameId: string } }) {
       </div>
 
       <div className={styles.boardWrapper}>
+        {isFinished && (
+          <Fireworks autorun={{ speed: 3, duration: 3000 }} />
+        )}
+
         {isFinished ? (
           winners.map(({ id }) => (
             <BoundingBox currentPlayer={id}/>
