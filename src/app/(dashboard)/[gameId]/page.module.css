@@ -1,6 +1,5 @@
 .wrapper {
   min-height: 100dvh;
-  overflow: hidden;
   padding: 20px;
   display: grid;
   grid-template-rows: auto 1fr;
@@ -17,5 +16,4 @@
   display: flex;
   border: 1px solid lightgray;
   border-radius: 8px;
-  overflow: hidden;
 }

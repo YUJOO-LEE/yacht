@@ -2,20 +2,25 @@
 
 import { Score } from '@/types';
 import styles from './player.module.css';
+import Medal from '@/assets/medal.svg';
 
 type Props = {
   key: string;
   id: string;
   name: string;
-  isActive: boolean;
   score?: Score;
+  isActive: boolean;
+  isWinner: boolean;
 }
 
 export const Player = (props: Props) => {
-  const { id, name, score, isActive } = props;
+  const { id, name, score, isActive, isWinner } = props;
 
   return (
     <div className={styles.scoreWrapper} id={id}>
+      <div className={`${styles.winner} ${isWinner ? styles.show : ''}`}>
+        <Medal/>
+      </div>
       <div className={`${styles.playerName} ${isActive ? styles.active : ''}`}>
         {name}
       </div>

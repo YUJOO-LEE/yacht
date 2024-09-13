@@ -19,7 +19,7 @@ export default function Room({ params }: { params: { gameId: string } }) {
 
   const currentPlayerName = playerScoreList.find(({ id }) => id === currentPlayer)?.name;
   const isFinished = playerScoreList.every(({ score }) => score && isAllValid(
-    [score.aces,score.deuces,score.threes,score.fours,score.fives,score.sixes,score.choice,score.fourOfAKind,score.fullHouse,score.smallStraight,score.largeStraight,score.yacht]
+    [score.aces, score.deuces, score.threes, score.fours, score.fives, score.sixes, score.choice, score.fourOfAKind, score.fullHouse, score.smallStraight, score.largeStraight, score.yacht],
   ));
   const winners = playerScoreList.reduce<{ id: string; name: string; total: number }[]>((prev, { id, name, score }) => {
     const current = { id, name, total: score?.total || 0 };
@@ -70,11 +70,25 @@ export default function Room({ params }: { params: { gameId: string } }) {
       </div>
 
       <div className={styles.boardWrapper}>
-        <BoundingBox currentPlayer={currentPlayer}/>
+        {isFinished ? (
+          winners.map(({ id }) => (
+            <BoundingBox currentPlayer={id}/>
+          ))
+        ) : (
+          <BoundingBox currentPlayer={currentPlayer}/>
+        )}
+
         <Aside/>
 
         {playerScoreList.map(({ id, name, score }) => (
-          <Player key={id} id={id} name={name} score={score} isActive={id === currentPlayer}/>
+          <Player
+            key={id}
+            id={id}
+            name={name}
+            score={score}
+            isActive={isFinished ? winners.some(winner => winner.id === id) : id === currentPlayer}
+            isWinner={winners.some(winner => winner.id === id)}
+          />
         ))}
       </div>
     </main>
