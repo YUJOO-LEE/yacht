@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react';
 import styles from './box.module.css';
 
 type Props = {
+  key?: string;
   currentPlayer: string;
 }
 

@@ -77,7 +77,7 @@ export default function Room({ params }: { params: { gameId: string } }) {
 
         {isFinished ? (
           winners.map(({ id }) => (
-            <BoundingBox currentPlayer={id}/>
+            <BoundingBox key={`bounding-box-${id}`} currentPlayer={id}/>
           ))
         ) : (
           <BoundingBox currentPlayer={currentPlayer}/>
