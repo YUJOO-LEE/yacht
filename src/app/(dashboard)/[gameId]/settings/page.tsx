@@ -3,7 +3,7 @@
 import { database } from '@/firebase';
 import { PlayerData } from '@/types';
 import { uuidv4 } from '@firebase/util';
-import { onValue, ref, set } from 'firebase/database';
+import { child, get, getDatabase, ref, set } from 'firebase/database';
 import { useRouter } from 'next/navigation';
 import React, { useEffect, useState } from 'react';
 import styles from './page.module.css';
@@ -12,7 +12,7 @@ export default function Setting({ params }: { params: { gameId: string } }) {
   const { gameId } = params;
   const router = useRouter();
 
-  const [players, setPlayers] = useState<PlayerData[]>([]);
+  const [players, setPlayers] = useState<PlayerData[]>([{ id: uuidv4().replaceAll('-', ''), name: '' }]);
   const isValid = players.length > 1 && players.every(({ name }) => name.trim());
 
   const handleAdd = (index: number) => () => {
@@ -42,26 +42,15 @@ export default function Setting({ params }: { params: { gameId: string } }) {
       players,
       currentPlayer: firstPlayer,
     });
-    router.push(`/${gameId}/${firstPlayer}`);
+    router.push(`/${gameId}/play`);
   };
 
   useEffect(() => {
-    const dataRef = ref(database, `games/${gameId}/players`);
-
-    const unsubscribe = onValue(dataRef, (snapshot) => {
-      if (snapshot.exists()) {
-        const rawData = snapshot.val();
-        const dataArray: PlayerData[] = Object.values(rawData);
-
-        if (!dataArray.length) return;
-        setPlayers(dataArray);
-      } else {
-        const id = uuidv4().replaceAll('-', '');
-        setPlayers([{ id, name: '' }]);
-      }
-    });
-
-    return () => unsubscribe();
+    const dbRef = ref(getDatabase());
+    get(child(dbRef, `games/${gameId}/players`)).then((snapshot) => {
+      if (!snapshot.exists()) return;
+      router.push(`/`);
+    })
   }, []);
 
   return (

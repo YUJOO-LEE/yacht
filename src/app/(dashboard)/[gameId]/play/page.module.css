@@ -4,10 +4,6 @@
   flex-direction: column;
   align-items: center;
   gap: 20px;
-
-  & button {
-    width: 256px;
-  }
 }
 
 .score {
@@ -21,4 +17,11 @@
     align-items: center;
     gap: 8px;
   }
+}
+
+.actions {
+  width: 256px;
+  display: grid;
+  grid-template-columns: 1fr 3fr;
+  gap: 8px;
 }

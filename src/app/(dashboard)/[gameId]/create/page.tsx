@@ -21,9 +21,8 @@ export default function Create({ params }: {
     const dataRef = ref(database, `games/${gameId}`); // Firebase 데이터 경로 설정
 
     const unsubscribe = onValue(dataRef, (snapshot) => {
-      if (snapshot.exists()) {
-        router.push(`/${gameId}`);
-      }
+      if (!snapshot.exists()) return;
+      router.push(`/${gameId}`);
     });
 
     return () => unsubscribe();

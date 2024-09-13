@@ -2,25 +2,23 @@
 
 import { database } from '@/firebase';
 import { GameData, PlayerData, Score } from '@/types';
-import { onValue, ref, update, set } from 'firebase/database';
+import { isNumber } from '@/utils';
+import { onValue, ref, update, set, get, getDatabase, child } from 'firebase/database';
 import { useRouter } from 'next/navigation';
 import React, { useEffect, useState } from 'react';
 import styles from './page.module.css';
 
-export default function Play({ params }: { params: { gameId: string; playerId: string } }) {
-  const { gameId, playerId } = params;
+export default function Play({ params }: { params: { gameId: string } }) {
+  const { gameId } = params;
   const router = useRouter();
 
-  const [players, setPlayers] = useState<{ prev: string; current: string; next: string }>({
-    prev: '',
-    current: '',
-    next: '',
-  });
+  const [players, setPlayers] = useState<{ prev?: PlayerData; current?: PlayerData; next?: PlayerData }>({});
   const [player, setPlayer] = useState<PlayerData>();
-  const [score, setScore] = useState<Score>({});
-  const [value, setValue] = useState<Score>({});
+  const [score, setScore] = useState<Omit<Score, 'subTotal' | 'total' | 'bonus'>>({});
+  const [value, setValue] = useState<Omit<Score, 'subTotal' | 'total' | 'bonus'>>({});
 
-  const isValid = JSON.stringify(score) === JSON.stringify(value);
+  const isPrevDisabled = players.prev?.id === players.current?.id;
+  const isNextDisabled = players.next?.id === player?.id || player?.id === players.current?.id && JSON.stringify(score) === JSON.stringify(value);
 
   const handleChange = (target: keyof Score) => (event: React.ChangeEvent<HTMLInputElement>) => {
     setValue((prev) => ({
@@ -29,17 +27,37 @@ export default function Play({ params }: { params: { gameId: string; playerId: s
     }));
   };
 
+  const handlePrev = async () => {
+    if (!player || isPrevDisabled) return;
+    setPlayer(players.prev);
+  };
+
   const handleNext = async () => {
+    if (!player || isNextDisabled || !players.next) return;
     const newPlayerRef = ref(database, `games/${gameId}/currentPlayer`);
-    await set(newPlayerRef, players.next);
+    await set(newPlayerRef, players.next.id);
     const newScoreRef = ref(database, `games/${gameId}/score`);
     await update(newScoreRef, {
-      [playerId]: value,
+      [player.id]: getScore(value),
     });
-    router.push(`/${gameId}/${players.next}`);
+    setPlayer(players.next);
   };
 
   useEffect(() => {
+    const dbRef = ref(getDatabase());
+    get(child(dbRef, `games/${gameId}`)).then((snapshot) => {
+      if (!snapshot.exists()) {
+        router.push(`/`);
+        return;
+      }
+      const data: GameData = snapshot.val();
+      const player = data.players.find(({ id }) => id === data.currentPlayer);
+      setPlayer(player);
+    })
+  }, []);
+
+  useEffect(() => {
+    if (!player) return;
     const dataRef = ref(database, `games/${gameId}`);
 
     const unsubscribe = onValue(dataRef, (snapshot) => {
@@ -49,15 +67,14 @@ export default function Play({ params }: { params: { gameId: string; playerId: s
       }
 
       const data: GameData = snapshot.val();
-      const player = data.players.find(({ id }) => id === playerId);
-      setPlayer(player);
-      setScore(data.score?.[playerId] || {});
-      setValue(data.score?.[playerId] || {});
+      setScore(data.score?.[player.id] || {});
+      setValue(data.score?.[player.id] || {});
 
-      const currentPlayer = data.currentPlayer;
-      const currentIndex = data.players.findIndex(({ id }) => id === currentPlayer);
-      const prevPlayer = data.players.at(currentIndex ? currentIndex - 1 : -1)?.id || '';
-      const nextPlayer = data.players.at(currentIndex < (data.players.length - 1) ? currentIndex + 1 : 0)?.id || '';
+      const currentPlayer = data.players.find(({ id }) => id === data.currentPlayer);
+
+      const currentIndex = data.players.findIndex(({ id }) => id === player.id);
+      const prevPlayer = data.players.at(currentIndex ? currentIndex - 1 : -1);
+      const nextPlayer = data.players.at(currentIndex < (data.players.length - 1) ? currentIndex + 1 : 0);
 
       setPlayers({
         prev: prevPlayer,
@@ -67,7 +84,7 @@ export default function Play({ params }: { params: { gameId: string; playerId: s
     });
 
     return () => unsubscribe();
-  }, []);
+  }, [player]);
 
   return (
     <main className={styles.main}>
@@ -221,9 +238,27 @@ export default function Play({ params }: { params: { gameId: string; playerId: s
           />
         </li>
       </ul>
-      <button className="red" disabled={isValid} onClick={handleNext}>
-        Next
-      </button>
+      <div className={styles.actions}>
+        <button className="gray" disabled={isPrevDisabled} onClick={handlePrev}>
+          Prev
+        </button>
+        <button className="red" disabled={isNextDisabled} onClick={handleNext}>
+          Next
+        </button>
+      </div>
     </main>
   );
+};
+
+const getScore = (score: Omit<Score, 'subTotal' | 'total' | 'bonus'>): Score => {
+  const subTotal = (score.aces || 0) + (score.deuces || 0) + (score.threes || 0) + (score.fours || 0) + (score.fives || 0) + (score.sixes || 0);
+  const bonus = subTotal >= 63 ? 35 : isNumber([score.aces, score.deuces, score.threes, score.fours, score.fives, score.sixes]) ? 0 : '';
+  const total = subTotal + (bonus || 0) + (score.choice || 0) + (score.fourOfAKind || 0) + (score.fullHouse || 0) + (score.smallStraight || 0) + (score.largeStraight || 0) + (score.yacht || 0);
+
+  return {
+    ...score,
+    subTotal,
+    bonus,
+    total,
+  }
 };

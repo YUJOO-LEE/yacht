@@ -16,6 +16,9 @@ export type Score = {
   smallStraight?: number;
   largeStraight?: number;
   yacht?: number;
+  subTotal: number;
+  bonus: number | string;
+  total: number;
 }
 
 export type GameData = {
@@ -23,3 +26,5 @@ export type GameData = {
   players: PlayerData[];
   score: Record<string, Score>;
 }
+
+export type PlayerScore = PlayerData & { score?: Score };
