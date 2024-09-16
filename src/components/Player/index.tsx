@@ -67,17 +67,17 @@ export const Player = (props: Props) => {
           {score?.fullHouse}
         </div>
         <div className={styles.scoreItem}>
-          {score?.smallStraight
+          {typeof score?.smallStraight === 'number'
             ? score.smallStraight
             : <span className={styles.placeholder}>15</span>}
         </div>
         <div className={styles.scoreItem}>
-          {score?.largeStraight
+          {typeof score?.largeStraight === 'number'
             ? score.largeStraight
             : <span className={styles.placeholder}>30</span>}
         </div>
         <div className={styles.scoreItem}>
-          {score?.yacht
+          {typeof score?.yacht === 'number'
             ? score.yacht
             : <span className={styles.placeholder}>50</span>}
         </div>
