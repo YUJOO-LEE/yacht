@@ -1,8 +1,8 @@
 'use client';
 
+import Medal from '@/assets/medal.svg';
 import { Score } from '@/types';
 import styles from './player.module.css';
-import Medal from '@/assets/medal.svg';
 
 type Props = {
   key: string;
@@ -67,13 +67,19 @@ export const Player = (props: Props) => {
           {score?.fullHouse}
         </div>
         <div className={styles.scoreItem}>
-          {score?.smallStraight}
+          {score?.smallStraight
+            ? score.smallStraight
+            : <span className={styles.placeholder}>15</span>}
         </div>
         <div className={styles.scoreItem}>
-          {score?.largeStraight}
+          {score?.largeStraight
+            ? score.largeStraight
+            : <span className={styles.placeholder}>30</span>}
         </div>
         <div className={styles.scoreItem}>
-          {score?.yacht}
+          {score?.yacht
+            ? score.yacht
+            : <span className={styles.placeholder}>50</span>}
         </div>
       </div>
 
